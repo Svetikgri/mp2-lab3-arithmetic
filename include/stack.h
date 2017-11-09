@@ -7,27 +7,90 @@
 // - получение количества элементов в стеке
 // - очистка стека
 // при вставке в полный стек должна перевыделяться память
+#include <iostream>
+
+using namespace std;
+
 #ifndef _Stack_h_
 #define _Stack_h_
 
-#define Size 25
+//#define Size 25
 
 template <class ValType>
 class Stack
 {
 protected:
   ValType *pstack;// массив для стека
-  int pos;//индекс последнего занятого
+  int top;//индекс последнего занятого
+  int Size;//размер стека
+
   
 public:
-	Stack()
+	Stack(int Size=25);
+	~Stack();
+	Stack(const Stack &st);//конструктор копирования
+	 void Push(const  ValType n);  //положить
+	 ValType Pop();  //извлечь элемент
+	 int View(/*const  ValType n*/);  // просмотр
+	 bool isfull();//проверка на полноту
+	 bool isempty();// проверка на пустоту
+	 int Get();//получить кол-во эл-тов
+	 void Clean();//очистка стека
+};
+template <class ValType>
+Stack<ValType>::Stack(int Size)
 	{
 		pstack=new ValType[Size];
+		top=-1;
 	}
-	~Stack();
-	 void Put(const  ValType n);  //положить
-	 void Take(const  ValType n);  //извлечь элемент
-	 int Look(const  ValType n);  
-	 int Check();
-	 int Get();//получить кол-во эл-тов
-};
+
+template <class ValType>
+Stack<ValType>::~Stack()
+	{
+		delete [] pstack;
+	}
+template <class ValType>
+Stack<ValType>::Stack(const Stack &st)
+{
+	Size=st.Size;
+	top=st.top;
+	pstack=new ValType[Size];
+	for (int i=0;i<top;i++)
+	pstack[i]=st.pstack[i];
+}
+template <class ValType>
+bool Stack<ValType>::isfull()
+{
+	if (top==(Size-1))
+		return true;
+	else 
+		return false;
+}
+
+template <class ValType>
+bool Stack<ValType>::isempty()
+{
+	if (top==-1)
+		return true;
+	else 
+		return false;
+}
+template <class ValType>
+ void Stack<ValType>::Push(const  ValType n)//положить
+ {
+	 if (top<(Size-1))
+	 {
+		pstack[top+1]=n;
+	 }
+	 else
+
+	
+ }
+ template <class ValType>
+  ValType Stack<ValType>::Pop()  //извлечь элемент
+  {
+	  return pstack[top];
+	  top=top-1;
+  }
+
+#endif
