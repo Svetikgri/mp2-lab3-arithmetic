@@ -31,15 +31,22 @@ public:
 	Stack(const Stack &st);//конструктор копирования
 	 void Push(const  ValType n);  //положить
 	 ValType Pop();  //извлечь элемент
-	 int View(/*const  ValType n*/);  // просмотр
+	 int View();  // просмотр
 	 bool isfull();//проверка на полноту
 	 bool isempty();// проверка на пустоту
 	 int Get();//получить кол-во эл-тов
+	 int GetTop();//получить top
 	 void Clean();//очистка стека
+	 bool operator==(const Stack &st) const;
+	 Stack & operator=(const Stack &st);
 };
+
 template <class ValType>
-Stack<ValType>::Stack(int Size)
+Stack<ValType>::Stack(int Size)//конструктор
 	{
+		if(Size<0)
+		throw "error";
+		Size=Size;
 		pstack=new ValType[Size];
 		top=-1;
 	}
@@ -49,48 +56,129 @@ Stack<ValType>::~Stack()
 	{
 		delete [] pstack;
 	}
+
 template <class ValType>
-Stack<ValType>::Stack(const Stack &st)
+Stack<ValType>::Stack(const Stack &st)//конструктор копирования
 {
 	Size=st.Size;
 	top=st.top;
 	pstack=new ValType[Size];
-	for (int i=0;i<top;i++)
+	for (int i=0;i<top+1;i++)
 	pstack[i]=st.pstack[i];
 }
+
 template <class ValType>
-bool Stack<ValType>::isfull()
+bool Stack<ValType>::isfull()// полон ли
 {
-	if (top==(Size-1))
+	if (top==Size)//(Size-1))
 		return true;
 	else 
 		return false;
 }
 
 template <class ValType>
-bool Stack<ValType>::isempty()
+bool Stack<ValType>::isempty()// пусто ли
 {
 	if (top==-1)
 		return true;
 	else 
 		return false;
 }
+
 template <class ValType>
  void Stack<ValType>::Push(const  ValType n)//положить
  {
-	 if (top<(Size-1))
+	 if ((Size - top)==-1)//(top>(Size-1))
 	 {
+		 ValType* temp;
+		 temp=new ValType[Size];
+		 for (int i=0;i<top+1;i++)
+			 temp[i]=pstack[i];
+		 delete [] pstack;
+		pstack=temp;
+			/*new ValType[Size*2];
+		for (int i=0;i<Size-1;i++)
+			 pstack[i]=temp[i];*/
+		
 		pstack[top+1]=n;
+		top++;
+		Size=2*Size;
 	 }
 	 else
-
-	
+	 {
+		pstack[top+1]=n;
+		top++; 
+	 }
  }
+
  template <class ValType>
   ValType Stack<ValType>::Pop()  //извлечь элемент
   {
+	  if (!isempty())
+	  {
 	  return pstack[top];
 	  top=top-1;
+	  }
+	  else throw "error";
   }
 
+  template <class ValType>
+  int Stack<ValType>::View() //просмотр
+  {
+	  if (!isempty())
+	{
+	  return pstack[top];
+	  }
+	  else throw "error";
+  }
+
+  template <class ValType>
+   int Stack<ValType>::Get()//получить кол-во эл-тов
+   {
+	  return top+1;   
+   }
+
+   template <class ValType>
+   int Stack<ValType>::GetTop()//получить top
+   {
+	  return top;   
+   }
+
+	template <class ValType>
+	void Stack<ValType>::Clean()//очистить
+	{
+		top=-1;
+	}
+	
+	template <class ValType>
+	 bool Stack<ValType>::operator==(const Stack &v) const
+	 {
+		 if (this == &v)
+		return true;
+	if(( Size != v.Size)||(top != v.top))
+		return false;
+	for (int i=0;i<top+1;i++)
+		if (pstack[i] != v.pstack[i])
+			return false;
+	return true;
+	 }
+
+	 template <class ValType>
+	 Stack<ValType> & Stack<ValType>::operator=(const Stack &v)
+	 {
+		 if (this != &v)
+	{
+		if (Size != v.Size)
+		{
+			delete[] pstack;
+			pVector=new ValType[v.Size];
+		}
+		Size=v.Size;
+		top=v.top;
+		for(int i=0;i<top+1;i++)
+			pstack[i]=v.pstack[i];
+		
+	}
+	return *this;
+	 }
 #endif
