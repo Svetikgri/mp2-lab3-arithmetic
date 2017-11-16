@@ -29,7 +29,7 @@ public:
 	Stack(int Size=25);
 	~Stack();
 	Stack(const Stack &st);//конструктор копирования
-	 void Push(const  ValType n);  //положить
+	 void Push(const  ValType& n);  //положить
 	 ValType Pop();  //извлечь элемент
 	 int View();  // просмотр
 	 bool isfull();//проверка на полноту
@@ -42,11 +42,11 @@ public:
 };
 
 template <class ValType>
-Stack<ValType>::Stack(int Size)//конструктор
+Stack<ValType>::Stack(int s)//конструктор
 	{
-		if(Size<0)
+		if(s<0)
 		throw "error";
-		Size=Size;
+		Size = s;
 		pstack=new ValType[Size];
 		top=-1;
 	}
@@ -70,7 +70,7 @@ Stack<ValType>::Stack(const Stack &st)//конструктор копирования
 template <class ValType>
 bool Stack<ValType>::isfull()// полон ли
 {
-	if (top==Size)//(Size-1))
+	if (top==Size-1)
 		return true;
 	else 
 		return false;
@@ -86,19 +86,16 @@ bool Stack<ValType>::isempty()// пусто ли
 }
 
 template <class ValType>
- void Stack<ValType>::Push(const  ValType n)//положить
+ void Stack<ValType>::Push(const  ValType& n)//положить
  {
-	 if ((Size - top)==-1)//(top>(Size-1))
+	 if (Size - top == 1)//(top>(Size-1))
 	 {
 		 ValType* temp;
-		 temp=new ValType[Size];
+		 temp=new ValType[Size * 2];
 		 for (int i=0;i<top+1;i++)
 			 temp[i]=pstack[i];
 		 delete [] pstack;
 		pstack=temp;
-			/*new ValType[Size*2];
-		for (int i=0;i<Size-1;i++)
-			 pstack[i]=temp[i];*/
 		
 		pstack[top+1]=n;
 		top++;
@@ -116,8 +113,8 @@ template <class ValType>
   {
 	  if (!isempty())
 	  {
-	  return pstack[top];
-	  top=top-1;
+	  	  top=top-1;
+		  return pstack[top + 1];
 	  }
 	  else throw "error";
   }
