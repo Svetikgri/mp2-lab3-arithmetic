@@ -82,3 +82,50 @@ TEST_F(Stack, copied_vector_is_equal_to_source_one)
  Stack<int> s2(s1);
   EXPECT_EQ(s1, s2);
 }*/
+
+TEST(Stack, can_compare_stacks_of_different_sizes_but_with_different_numbers)
+{
+	Stack<int> st1(2), st2(2);
+	st1.Push(1);
+	st1.Push(3);
+	st2.Push(1);
+	st2.Push(2);
+
+	EXPECT_NE(true, st1 == st2);
+}
+
+TEST(Stack, can_return_the_number_of_elements)
+{
+	Stack<int> st(4);
+	st.Push(1);
+	st.Push(3);
+	st.Push(1);
+	st.Push(2);
+	st.Clean();
+
+	EXPECT_EQ(true, st.isempty());
+}
+
+TEST(Stack, can_equate_stacks_of_different_sizes)
+{
+	Stack<int> st(3), st1(2);
+	st1.Push(1);
+	st1.Push(2);
+	st.Push(1);
+	st.Push(2);
+	st.Push(3);
+
+	st = st1;
+
+	EXPECT_EQ(st1, st);
+}
+
+TEST(Stack, can_equate_equal_stacks)
+{
+	Stack<int> st1(2);
+	st1.Push(1);
+	st1.Push(2);
+
+	st1 = st1;
+	EXPECT_EQ(st1, st1);
+}
