@@ -36,14 +36,27 @@ TEST(Stack, can_get_element_Pop)
 
   EXPECT_EQ(30, s1.Pop());
 }
-
+TEST(Stack, cheak_stack_isempty)
+{
+	 Stack<int> s1(10);
+	  s1.Push(1);
+	 s1.Pop();
+	 EXPECT_EQ(s1.isempty(),true);
+}
+TEST(Stack, cheak_stack_isfull)
+{
+	 Stack<int> s1(3);
+	  s1.Push(1);
+	   s1.Push(1);
+	    s1.Push(1);	 
+	 EXPECT_EQ(s1.isfull(),true);
+}
 TEST(Stack, can_not_delete_if_stack_is_empty)
 {
 	 Stack<int> s1(10);
 	 s1.Push(1);
 	 s1.Pop();
-	 s1.isempty();
-	  ASSERT_ANY_THROW(s1.Pop());
+     ASSERT_ANY_THROW(s1.Pop());
 }
 TEST(Stack, compare_equal_stack_return_true)
 {
@@ -59,28 +72,30 @@ TEST(Stack, copied_stack_is_equal_to_source_one)
 	Stack<int> st2(st1);
 	EXPECT_EQ(st1, st2);
 } 
-/*class Stacktest : public ::testing::Test {
+
+class Stacktest : public ::testing::Test {
 protected:
-	Stack s1;
-	Stack s2;
+	Stack<int> s1;
+	Stack<int> s2;
 
 public:
-  Stack() : s1(25), s2(25) {
+  Stacktest() : s1(25), s2(25) {
     s1.Push(1);
     s1.Push(2);
     s1.Push(3);
 
     s2.Push(1);
-    s2.Push(3);
-   s2.Push(5);
+    s2.Push(2);
+   s2.Push(3);
   }
 
-  ~Stack() {}
+  ~Stacktest() {}
 };
-TEST_F(Stack, copied_vector_is_equal_to_source_one)
+
+TEST_F(Stacktest, copied_vector_is_equal_to_source_one)
 {
- Stack<int> s2(s1);
   EXPECT_EQ(s1, s2);
+<<<<<<< HEAD
 }*/
 
 TEST(Stack, can_compare_stacks_of_different_sizes_but_with_different_numbers)
@@ -129,3 +144,6 @@ TEST(Stack, can_equate_equal_stacks)
 	st1 = st1;
 	EXPECT_EQ(st1, st1);
 }
+=======
+}
+>>>>>>> 42cebc58e807f7a806c251a021004a70699af744
