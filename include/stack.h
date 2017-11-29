@@ -168,7 +168,7 @@ template <class ValType>
 		if (Size != v.Size)
 		{
 			delete[] pstack;
-			pVector=new ValType[v.Size];
+			pstack=new ValType[v.Size];
 		}
 		Size=v.Size;
 		top=v.top;

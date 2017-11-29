@@ -73,7 +73,7 @@ TEST(Stack, copied_stack_is_equal_to_source_one)
 	EXPECT_EQ(st1, st2);
 } 
 
-class Stacktest : public ::testing::Test {
+/*class Stacktest : public ::testing::Test {
 protected:
 	Stack<int> s1;
 	Stack<int> s2;
@@ -95,7 +95,7 @@ public:
 TEST_F(Stacktest, copied_vector_is_equal_to_source_one)
 {
   EXPECT_EQ(s1, s2);
-<<<<<<< HEAD
+
 }*/
 
 TEST(Stack, can_compare_stacks_of_different_sizes_but_with_different_numbers)
@@ -144,6 +144,3 @@ TEST(Stack, can_equate_equal_stacks)
 	st1 = st1;
 	EXPECT_EQ(st1, st1);
 }
-=======
-}
->>>>>>> 42cebc58e807f7a806c251a021004a70699af744
