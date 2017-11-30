@@ -1,91 +1,111 @@
-// объявление функций и классов для вычисления арифметических выражений
+// РѕР±СЉСЏРІР»РµРЅРёРµ С„СѓРЅРєС†РёР№ Рё РєР»Р°СЃСЃРѕРІ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РІС‹СЂР°Р¶РµРЅРёР№
 
 
 #pragma once
 
 #include <string>
 #include <iostream>
+#include "Stack" 
 
 using namespace std;
 
 enum TermTypes {OPEN_BRACKET, CLOSE_BRACKET, OPERATOR, VALUE, UNKNOWN} ;
 
-const string allOperators = "+-*/()";
+const string allOperators = "+-*/().0123456789";
 
 struct Term
 {
 	TermTypes type;
-	//string symbol; // можно без него
+	//string symbol; // РјРѕР¶РЅРѕ Р±РµР· РЅРµРіРѕ
 	double val;
 
-	Term();
+	Term() { val = 0.0; type = UNKNOWN; };
 	Term(const string& str);
 	Term(char c);
-	Term(const string& str, TermTypes myType);
+    //Term(const string& str, TermTypes myType);
 	Term(char c, TermTypes myType);
-	// конструктор копирования
-	Term & operator=(const Term &p);// перегрузка =
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+	Term & operator=(const Term &p);// РїРµСЂРµРіСЂСѓР·РєР° =
+	Term(double myVal, TermTypes myType);
+	bool operator==(const Term &p) const
+	{
+		if ((val == p.val) && (type == p.type))
+			return true;
+		else return false;
+	}
 };
 
-// конвертация в double функция stod(): http://www.cplusplus.com/reference/string/stod/
+class Arithmetic
+{
+	string inputStr; // РІС…РѕРґРЅР°СЏ СЃС‚СЂРѕРєР°
+	Term* terms; //РјР°СЃСЃРёРІ Р»РµРєСЃРµРј
+	int nTerms; // С‡РёСЃР»Рѕ С‚РµСЂРјРѕРІ РІРѕ РІС…РѕРґРЅРѕР№ СЃС‚СЂРѕРєРµ
+
+	
+	Term* polishTerms; // РїРѕР»СЊСЃРєР°СЏ Р·Р°РїРёСЃСЊ РІ РІРёРґРµ РјР°СЃСЃРёРІР° С‚РµСЂРјРѕРІ
+	int nPolishTerms; // С‡РёСЃР»Рѕ С‚РµСЂРјРѕРІ РІ РїРѕР»СЊСЃРєРѕР№ Р·Р°РїРёСЃРё
+
+	void DivideToTerms(); // РѕР±С…РѕРґРёРј РІС…РѕРґРЅСѓСЋСЋ СЃС‚СЂРѕРєСѓ Рё СЂР°Р·Р±РёРІР°РµРј РµРµ РЅР° РјР°СЃСЃРёРІ terms, Р·РґРµСЃСЊ Р¶Рµ РѕРїСЂРµРґРµР»СЏРµРј РёС… РєРѕР»-РІРѕ.
+	void ConvertToPolish(); // РІС…РѕРґ - РјР°СЃСЃРёРІ terms, nTerms; РІС‹С…РѕРґ - РјР°СЃСЃРёРІ polishTerms, nPolishTerms
+	double Calculate(); // РІС‹С‡РёСЃР»РµРЅРёРµ РїРѕ РїРѕР»СЊСЃРєРѕР№ Р·Р°РїРёСЃРё. Р’С…РѕРґ - РјР°СЃСЃРёРІ polishTerms, nPolishTerms, РІС‹С…РѕРґ - double РѕС‚РІРµС‚
 
 
-// "(34-5)" ==>  массив из 5 Term 
-// если храним поле symbol
+public:
+	
+	Arithmetic(const string& str)//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+	{
+		terms = new Term[str.length()];
+		inputStr = str;
+		nTerms = 0;
+		DivideToTerms();
+	}
+	~Arithmetic() { delete[] terms; } //РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+	Arithmetic& operator=(const Arithmetic& a); // РїРµСЂРµРіСЂСѓР·РєР° =
+	void delspace(); //СѓРґР°Р»РµРЅРёРµ РїСЂРѕР±РµР»РѕРІ
+	bool check_brackets() const; // РїСЂРѕРІРµСЂРєР° РЅР° РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ СЃРєРѕР±РѕРє
+	bool check_symbols() const;	//РџСЂРѕРІРµСЂРєР° РЅР° РЅРµРґРѕРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹
+	bool check_opers() const;// РїСЂРѕРІРµСЂРєР° РЅР° РѕРїРµСЂР°С†РёРё С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ ++
+	int Check(); //РІРѕР·РІСЂР°С‰Р°РµС‚ РїРѕР·РёС†РёСЋ, РІ РєРѕС‚РѕСЂРѕР№ РѕС€РёР±РєР°
+
+
+	// СЌС‚Рѕ РЅСѓР¶РЅРѕ РґР»СЏ С‚РµСЃС‚РѕРІ
+	Term* getTerms() const { return terms; }
+	int getNTerms() const  { return nTerms; }
+};
+
+
+
+
+
+// РєРѕРЅРІРµСЂС‚Р°С†РёСЏ РІ double С„СѓРЅРєС†РёСЏ stod(): http://www.cplusplus.com/reference/string/stod/
+
+
+// "(34-5)" ==>  РјР°СЃСЃРёРІ РёР· 5 Term 
+// РµСЃР»Рё С…СЂР°РЅРёРј РїРѕР»Рµ symbol
 // [0] type = OPEN_BRACKET, symbol = "(", val = 0.0;
 // [1] type = VALUE, symbol = "34", val = 34.0;
 // [2] type = OPERATOR, symbol = "-", val = 0.0;
 // [3] type = VALUE, symbol = "5", val = 5.0;
 // [2] type = CLOSE_BRACKET, symbol = ")", val = 0.0;
 
-// если НЕ храним поле symbol
+// РµСЃР»Рё РќР• С…СЂР°РЅРёРј РїРѕР»Рµ symbol
 // [0] type = OPEN_BRACKET, val = 0.0;
 // [1] type = VALUE, symbol = "34", val = 34.0;
-// [2] type = OPERATOR, val = 1.0 (это позиция '-' в строке allOperators);
+// [2] type = OPERATOR, val = 1.0 (СЌС‚Рѕ РїРѕР·РёС†РёСЏ '-' РІ СЃС‚СЂРѕРєРµ allOperators);
 // [3] type = VALUE, val = 5.0;
 // [2] type = CLOSE_BRACKET, val = 0.0;
 
 
-// для этой строки: polishTerms = {"34", "5", "-"}
+// РґР»СЏ СЌС‚РѕР№ СЃС‚СЂРѕРєРё: polishTerms = {"34", "5", "-"}
 
 //Term t = Term("(");
 //Term t2 = Term("34");
-
-class Arithmetic
-{
-	string inputStr; // входная строка
-	Term* terms; //массив лексем
-	int nTerms; // число термов во входной строке
-
-	Term* polishTerms; // польская запись в виде массива термов
-	int nPolishTerms; // число термов в польской записи
-
-
-	void DivideToTerms(); // обходим входнуюю строку и разбиваем ее на массив terms, здесь же определяем их кол-во.
-	void ConvertToPolish(); // вход - массив terms, nTerms; выход - массив polishTerms, nPolishTerms
-	double Calculate(); // вычисление по польской записи. Вход - массив polishTerms, nPolishTerms, выход - double ответ
-
-public:
-	Arithmetic& operator=(const Arithmetic& a); 
-	Arithmetic(const string& str)
-	{
-		terms = new Term[str.length()];
-		inputStr = str;
-		nTerms = 0;
-	}
-	~Arithmetic() { delete[] terms; } 
-	bool check_brackets() const;
-	int Check(); //возвращает позицию, в которой ошибка
-};
-
-
-
 
 /*#include <iostream>
 
 using namespace std;
 
-enum LexType {VAL, OPER, OP_BR, CL_BR, QU}; //число, операция, ( , ) , = 
+enum LexType {VAL, OPER, OP_BR, CL_BR, QU}; //С‡РёСЃР»Рѕ, РѕРїРµСЂР°С†РёСЏ, ( , ) , = 
 
 struct Lexem
 {
