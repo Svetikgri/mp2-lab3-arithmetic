@@ -3,6 +3,22 @@
 #include <gtest.h>
 #include "arithmetic.h"
 
+
+TEST(Arithm, can_create_term)
+{
+  ASSERT_NO_THROW(Term t(5.0,VALUE));
+}
+
+TEST(Arithm, can_create_term1)
+{
+  ASSERT_NO_THROW(Term t(')',CLOSE_BRACKET));
+}
+
+TEST(Arithm, can_create_term2)
+{
+  ASSERT_NO_THROW(Term t("+"));
+}
+
 TEST(Arithm, t1)
 {
 	Arithmetic a("(");

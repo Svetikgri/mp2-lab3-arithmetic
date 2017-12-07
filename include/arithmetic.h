@@ -19,20 +19,17 @@ struct Term
 	//string symbol; // можно без него
 	double val;
 
-	Term() { val = 0.0; type = UNKNOWN; };
+	Term();
 	Term(const string& str);
+	Term(const string& str, TermTypes myType);
 	Term(char c);
     //Term(const string& str, TermTypes myType);
 	Term(char c, TermTypes myType);
 	// конструктор копирования
 	Term & operator=(const Term &p);// перегрузка =
 	Term(double myVal, TermTypes myType);
-	bool operator==(const Term &p) const
-	{
-		if ((val == p.val) && (type == p.type))
-			return true;
-		else return false;
-	}
+	bool operator==(const Term &p) const;
+	
 };
 
 class Arithmetic
@@ -52,21 +49,15 @@ class Arithmetic
 
 public:
 	
-	Arithmetic(const string& str)//конструктор
-	{
-		terms = new Term[str.length()];
-		inputStr = str;
-		nTerms = 0;
-		DivideToTerms();
-	}
-	~Arithmetic() { delete[] terms; } //деструктор
+	Arithmetic(const string& str);//конструктор
+	~Arithmetic(); //деструктор
 	Arithmetic& operator=(const Arithmetic& a); // перегрузка =
 	void delspace(); //удаление пробелов
 	bool check_brackets() const; // проверка на правильность скобок
 	bool check_symbols() const;	//Проверка на недопустимые символы
 	bool check_opers() const;// проверка на операции чтобы не было ++
 	int Check(); //возвращает позицию, в которой ошибка
-
+	bool priority(Term in, Term top) const; 
 
 	// это нужно для тестов
 	Term* getTerms() const { return terms; }
@@ -101,25 +92,3 @@ public:
 //Term t = Term("(");
 //Term t2 = Term("34");
 
-/*#include <iostream>
-
-using namespace std;
-
-enum LexType {VAL, OPER, OP_BR, CL_BR, QU}; //число, операция, ( , ) , = 
-
-struct Lexem
-{
-	char str[10];
-	LexType type;
-	Lexem(char *s, LexType t);
-	Lexem(const Lexem &p);
-	Lexem & operator=(const Lexem &p);
-	bool operator==(const Lexem &p) const;
-};
-
-
-
-class Arithmetic
-{
-
-};*/
