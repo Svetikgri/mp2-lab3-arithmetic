@@ -5,7 +5,7 @@
 
 #include <string>
 #include <iostream>
-#include "Stack" 
+#include "stack.h" 
 
 using namespace std;
 

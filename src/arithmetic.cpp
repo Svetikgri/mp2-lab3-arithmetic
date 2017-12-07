@@ -1,6 +1,7 @@
 // реализация функций и классов для вычисления арифметических выражений
 
 #include "arithmetic.h"
+
 using namespace std;
 
 
@@ -70,20 +71,16 @@ void Arithmetic::DivideToTerms()
 			{
 				if (isdigit(c)) //если это цифра, начиная с нее будет число.
 				{
-			string v;
-			int j = i;
-			int p=0; //позиция первого символа после числа
-			double res;
-			/*while (j < inputStr.length() && (inputStr[j] == isdigit(c) || inputStr[j] == '.'))//если равно цифре
-			{
-				j++;  
-			}*/
-			v = inputStr.substr(i, j - i);
-			//res=stod(v,p);//сконвертировал строку в число например "123+2" => 123.0   //p = 3 (+)
-			terms[nTerms] = Term(res, VALUE); // здесь определили тип внутри конструктора
-			nTerms++;
+					string v;
+					int j = i;
+					size_t p=0; //позиция первого символа после числа
+					double res;
+					v = inputStr.substr(i);
+					res=stod(v, &p);//сконвертировал строку в число например "123+2" => 123.0   //p = 3 (+)
+					terms[nTerms] = Term(res, VALUE); // здесь определили тип внутри конструктора
+					nTerms++;
 
-			i = j - 1;
+					i += p - 1;
 				}
 				else if (allOperators.find(c) == string::npos) //если символ не нашли в строке allOperators
 					throw "no_correct_symbol";
@@ -152,18 +149,18 @@ bool Arithmetic::check_brackets() const
 bool Arithmetic::check_symbols() const//проверка на недопустимые символы
 {
 	bool res=true;
+	cout << "UNKNOWN symbols: ";
+
 	for (int i=0;i<nTerms;i++)
 		if (terms[i].type==UNKNOWN)
 		{
-			if (res!=0)
-			{
-				cout << "UNKNOWN symbols:\n";
-				cout << terms[i].type << endl;
-				res = false;
-			}
+			res = false;
+			cout << " term " << i << endl;
 		}
-		else 
-return true;
+	if (res)
+		cout << "none\n";
+
+	return res;
 }
 
 bool Arithmetic::check_opers() const
@@ -184,7 +181,7 @@ bool Arithmetic::check_opers() const
 		cout << terms[0].type << endl;
 			res=false;
 	}
-	for (int i=0;i<nTerms-1;i++)
+	for (int i=0;i<nTerms - 1;i++)
 	{
 		if (terms[i].type == VALUE)
 			if (terms[i+1].type == OPERATOR || OPEN_BRACKET)
@@ -209,8 +206,9 @@ bool Arithmetic::check_opers() const
 }
 
 void Arithmetic::ConvertToPolish()
-{
+{/*
 	nPolishTerms=0;
+	Stack<Term> temp(2*nTerms);
 	for (int i=0;i<nTerms-1;i++)
 	{
 		if (terms[i].type == VALUE)
@@ -219,7 +217,17 @@ void Arithmetic::ConvertToPolish()
 			nPolishTerms++;
 		}
 
-	}
+		if (terms[i].type == OPEN_BRACKET)
+		{
+		temp.Push(terms[i]);
+		}
+
+		if (terms[i].type == CLOSE_BRACKET)
+		{
+			while ((temp.GetTop()).type != OPEN_BRACKET)
+				polishTerms[i]=terms[i];
+		}
+	}*/
 }
 
 
