@@ -35,6 +35,7 @@ public:
 	 bool isfull();//проверка на полноту
 	 bool isempty();// проверка на пустоту
 	 int Get();//получить кол-во эл-тов
+	 ValType Peek();  // Вернуть элемент с вершины стека без его удаления
 	 int GetTop();//получить top
 	 void Clean();//очистка стека
 	 bool operator==(const Stack &st) const;
@@ -107,6 +108,14 @@ template <class ValType>
 		top++; 
 	 }
  }
+ template <class ValType>			                               // Вернуть элемент с вершины стека без его удаления
+ValType Stack<ValType>::Peek() 
+{
+	if (!isempty())
+		return pstack[top];
+	else
+		throw 1;
+}
 
  template <class ValType>
   ValType Stack<ValType>::Pop()  //извлечь элемент

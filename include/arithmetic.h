@@ -16,7 +16,7 @@ const string allOperators = "+-*/().0123456789";
 struct Term
 {
 	TermTypes type;
-	//string symbol; // можно без него
+	string str; // можно без него
 	double val;
 
 	Term();
@@ -29,7 +29,8 @@ struct Term
 	Term & operator=(const Term &p);// перегрузка =
 	Term(double myVal, TermTypes myType);
 	bool operator==(const Term &p) const;
-	
+	bool operator!=(const Term& lop);
+
 };
 
 class Arithmetic
@@ -39,13 +40,14 @@ class Arithmetic
 	int nTerms; // число термов во входной строке
 
 	
-	Term* polishTerms; // польская запись в виде массива термов
-	int nPolishTerms; // число термов в польской записи
+	//Term* polishTerms; // польская запись в виде массива термов
+	//int nPolishTerms; // число термов в польской записи
 
-	void DivideToTerms(); // обходим входнуюю строку и разбиваем ее на массив terms, здесь же определяем их кол-во.
-	void ConvertToPolish(); // вход - массив terms, nTerms; выход - массив polishTerms, nPolishTerms
-	double Calculate(); // вычисление по польской записи. Вход - массив polishTerms, nPolishTerms, выход - double ответ
-
+	
+	//void ConvertToPolish(); // вход - массив terms, nTerms; выход - массив polishTerms, nPolishTerms
+	int OPN(Term* maslex) ;
+	
+	
 
 public:
 	
@@ -56,12 +58,17 @@ public:
 	bool check_brackets() const; // проверка на правильность скобок
 	bool check_symbols() const;	//Проверка на недопустимые символы
 	bool check_opers() const;// проверка на операции чтобы не было ++
-	int Check(); //возвращает позицию, в которой ошибка
+	bool IsCorrect() const;
+	//int Check(); //возвращает позицию, в которой ошибка
 	bool priority(Term in, Term top) const; 
+	double Calculate()const; // вычисление по польской записи. Вход - массив polishTerms, nPolishTerms, выход - double ответ
+	void DivideToTerms(); // обходим входнуюю строку и разбиваем ее на массив terms, здесь же определяем их кол-во.
+
 
 	// это нужно для тестов
 	Term* getTerms() const { return terms; }
 	int getNTerms() const  { return nTerms; }
+	int OPN_test(Term* maslex) {return OPN(maslex);}
 };
 
 
