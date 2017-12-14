@@ -16,13 +16,14 @@ const string allOperators = "+-*/().0123456789";
 struct Term
 {
 	TermTypes type;
-	string str; // можно без него
 	double val;
+	string str;
 
 	Term();
 	Term(const string& str);
 	Term(const string& str, TermTypes myType);
-	Term(char c);
+	Term (const Term& s) { type=s.type; str=s.str; val = s.val; }
+	//Term(char c);
     //Term(const string& str, TermTypes myType);
 	Term(char c, TermTypes myType);
 	// конструктор копирования
@@ -38,14 +39,11 @@ class Arithmetic
 	string inputStr; // входная строка
 	Term* terms; //массив лексем
 	int nTerms; // число термов во входной строке
-
-	
-	//Term* polishTerms; // польская запись в виде массива термов
-	//int nPolishTerms; // число термов в польской записи
+	Term* polishTerms; // польская запись в виде массива термов
+	int nPolishTerms; // число термов в польской записи
 
 	
 	//void ConvertToPolish(); // вход - массив terms, nTerms; выход - массив polishTerms, nPolishTerms
-	int OPN(Term* maslex) ;
 	
 	
 
@@ -63,12 +61,13 @@ public:
 	bool priority(Term in, Term top) const; 
 	double Calculate()const; // вычисление по польской записи. Вход - массив polishTerms, nPolishTerms, выход - double ответ
 	void DivideToTerms(); // обходим входнуюю строку и разбиваем ее на массив terms, здесь же определяем их кол-во.
-
+	void OPN();
 
 	// это нужно для тестов
 	Term* getTerms() const { return terms; }
 	int getNTerms() const  { return nTerms; }
-	int OPN_test(Term* maslex) {return OPN(maslex);}
+    int OPN_test() {return nPolishTerms; }
+	Term* getPolishTerms() const { return polishTerms; }
 };
 
 

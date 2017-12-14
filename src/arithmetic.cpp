@@ -13,22 +13,27 @@ Term & Term::operator=(const Term &p)//конструктор копирован
 {
 	type=p.type;
 	val=p.val;
+	str = p.str;
 	return *this;
 }
-Term::Term(const string & str)
+Term::Term(const string & str1)
 {
-	val = stod(str);
+	val = stod(str1);
 	type = VALUE;
+	str = str1;
 }
 Term::Term(char c, TermTypes myType)
 {
 	type = myType;
 	val = allOperators.find(c);
+	str = c;
 }
-Term::Term(char c)
-{
-	val = allOperators.find(c);
-}
+//Term::Term(char c)
+//{
+//     str=c;
+//	//type = OPERATOR;
+//	val = allOperators.find(c);
+//}
 Term::Term(double myVal, TermTypes myType)
 {
 	val = myVal;
@@ -49,11 +54,11 @@ bool Term::operator!=(const Term& lop)
 	}
 
 void Arithmetic::DivideToTerms()
-{
+{   nTerms=0;
 	for (int i = 0; i < inputStr.length(); i++)
 	{
 		char c = inputStr[i];
-
+		
 		switch (c)
 		{
 		case '(': 
@@ -114,15 +119,19 @@ void Arithmetic::delspace()//удаление пробелов
 
 Arithmetic::Arithmetic(const string & str)//конструктор
 {
-		terms = new Term[str.length()];
 		inputStr = str;
+		// можно здесь вызвать функцию, которая вставит в inputStr 0 перед унарным -.
+		terms = new Term[inputStr.length()];
+		polishTerms = NULL;
 		nTerms = 0;
 		DivideToTerms();
 }
 
 Arithmetic::~Arithmetic()
 { 
-	delete[] terms; 
+	delete[] terms;
+	if (polishTerms!=NULL)
+		delete[] polishTerms;
 }
 
 Arithmetic& Arithmetic::operator=(const Arithmetic& a)
@@ -182,14 +191,14 @@ bool Arithmetic::check_opers() const//+
 	{
 		cout << "can`t start with CLOSE_BRACKET:\n ";
 		cout << terms[0].type << endl;
-			res=false;
+			res=false; return false;
 	}
 	else if 
 		(terms[0].type == OPERATOR)
 	{
 		cout << "can`t start with OPERATOR:\n ";
 		cout << terms[0].type << endl;
-			res=false;
+			res=false; return false;
 	}
 	for (int i=0;i<nTerms - 1;i++)
 	{
@@ -215,60 +224,7 @@ bool Arithmetic::check_opers() const//+
 	return res;
 }
 
-int Arithmetic::OPN(Term* maslex) //перевод в польскую запись
-{
-	Arithmetic res(*this);
-	res.nTerms = 0;
-	Stack<Term> a(2*nTerms);	
-	int j=0;
 
-	for (int i = 0; i < nTerms; i++)
-	{
-		if (terms[i].type == VALUE)
-			maslex[j++]= terms[i];
-
-		if (terms[i].type == OPEN_BRACKET)
-			a.Push(terms[i]);
-
-		if (terms[i].type == CLOSE_BRACKET)
-				{
-					Term x = a.Pop();
-					while (x.type != OPEN_BRACKET)
-					{
-						maslex[j++]= x;
-						x = a.Pop();
-					}
-				}
-
-		if (terms[i].type == OPERATOR)
-		{
-			if (a.isempty())
-				a.Push(terms[i]);
-			else
-			{
-
-				 Term x = a.Peek();
-				 while ((a.isempty()!= 1) && priority(terms[i],x)) 
-				 {
-					 x = a.Pop();
-					 maslex[j++]= x;
-					 x = a.Peek(); 
-				 }
-				 a.Push(terms[i]);
-			}
-		}
-
-		
-	}
-
-	while (!a.isempty())
-	{
-		Term x = a.Pop();
-		maslex[j++]= x;
-	}
-
-	return j;
-}
 
 bool Arithmetic::IsCorrect() const//корректно ли
 {
@@ -294,6 +250,8 @@ bool Arithmetic::priority(Term in, Term top) const
 	int p1, p2;
 	switch (in.str[0])
 	{
+	case '(': p1 = -1;
+		break;
 	case '+': p1 = 0;
 		break;
 	case '-': p1 = 0;
@@ -303,6 +261,8 @@ bool Arithmetic::priority(Term in, Term top) const
 
 	switch (top.str[0])
 	{
+	case '(': p2 = -1;
+		break;
 	case '+': p2 = 0;
 		break;
 	case '-': p2 = 0;
@@ -315,39 +275,141 @@ bool Arithmetic::priority(Term in, Term top) const
 return false;
 }
 
-double Arithmetic::Calculate() const
+
+
+void Arithmetic::OPN() //перевод в польскую запись
 {
-	Stack<double> a;
-	Stack<string> s;
-	double res = 0.0;
-	string st_now;
+	polishTerms = new Term[nTerms];
+	nPolishTerms = 0;
+
+	Term* temp = polishTerms;
+
+	Stack<Term> a(2*nTerms);	
+	int j=0;
 
 	for (int i = 0; i < nTerms; i++)
 	{
 		if (terms[i].type == VALUE)
+			temp[j++]= terms[i];
+
+		if (terms[i].type == OPEN_BRACKET)
+			a.Push(terms[i]);
+
+		if (terms[i].type == CLOSE_BRACKET)
+				{
+					Term x = a.Pop();
+					while (x.type != OPEN_BRACKET)
+					{
+						temp[j++]= x;
+						x = a.Pop();
+					}
+				}
+
+		if (terms[i].type == OPERATOR)
 		{
-			a.Push(stod(terms[i].str));    //stod в double.
+			if (a.isempty())
+				a.Push(terms[i]);
+			else
+			{
+
+				 Term x = a.Peek();
+				 while ((a.isempty()!= 1) && priority(terms[i],x)) 
+				 {
+					 x = a.Pop();
+					 temp[j++]= x;
+					 x = a.Peek(); 
+				 }
+				 a.Push(terms[i]);
+			}
+		}
+
+		
+	}
+
+	while (!a.isempty())
+	{
+		Term x = a.Pop();
+		// 1) a.Pop() ==> вызов конструктора копирования для возврата значения pstack[top + 1] , получили временный объект K
+		// 2) x = K ==> вызов x.operator=(K)
+		temp[j++]= x;
+	}
+
+	nPolishTerms = j;
+
+	
+}
+
+
+double Arithmetic::Calculate() const
+{
+	Stack<double> a;
+	double res = 0.0;
+	
+	for (int i = 0; i < nPolishTerms; i++)
+	{
+		if (polishTerms[i].type == VALUE)
+		{
+			a.Push(polishTerms[i].val);
 		}
 			
-		if (terms[i].type == OPERATOR)
+		else if (polishTerms[i].type == OPERATOR)
 		{
 			double b = a.Pop();
 			double c = a.Pop();
-			switch (terms[i].str[0])
+			switch ((int)polishTerms[i].val)
 			{
-			case '+': res = b+c; break;
-			case '-': res = b-c; break;
-			case '*': res = b*c; break;
-			case '/': res = b/c; break;
+			case 0: res = b+c; break;
+			case 1: res = b-c; break;
+			case 2: res = b*c; break;
+			case 3: res = b/c; break;
 			}
 			a.Push(res);
 		}
 	}
-	return a.Peek();
+	return a.Pop();
 }
 
 
 
+
+/*double Arithmetic::Calculate()
+{
+	Stack<double> st;
+	double res = 0.0;
+	
+	for (int i = 0; i <nPolishTerms; i++)
+	{   
+		
+		if (polishTerms[i].type == VALUE)
+		{
+			st.Push(polishTerms[i].val);
+
+		}
+		if (polishTerms[i].type == OPERATOR)
+		{
+			double A = st.Pop();
+			double B = st.Pop();
+
+			switch (polishTerms[i].str)
+			{
+			case '+': 
+				res = A + B;
+				break;
+			case '-':
+				res = B - A;
+				break;
+			case '*':
+				res = A * B;
+				break;
+			case '/':
+				res = B / A;
+				break;
+			}
+			st.Push(res);
+		}
+	}
+	return st.Pop();
+}*/// Vani
 
 
 // это в Calculate
@@ -361,7 +423,59 @@ double Arithmetic::Calculate() const
 		s.Push(st_now);
 		}*/
 
+/*void Arithmetic::ConvertToPolish()
+{    
+    
+	Stack<Term> st; 
+	polishTerms = new Term[nPolishTerms];
+	int j = 0;
 
+	for (int i = 0; i <nPolishTerms; i++)
+	{   
+
+		if (terms[i].type == VALUE)
+			polishTerms[j++] = terms[i];
+
+		if (terms[i].type == OPEN_BRACKET)
+			st.Push(terms[i]);
+
+		if (terms[i].type == CLOSE_BRACKET)
+		{
+			while (st.GetTop().type != OPEN_BRACKET)
+				polishTerms[j++] = st.Pop();
+			st.Pop();
+		}
+		
+
+		if (terms[i].type == OPERATOR)
+		{
+			if (st.isempty())
+			{
+				st.Push(terms[i]);
+			}
+			else
+			{
+				Term L = st.GetTop();
+				while (!st.isempty() && L.val >= terms[i].val) // :?
+				{
+					L = st.Pop();
+					polishTerms[j++] = L;
+					L = st.GetTop();
+				}
+				st.Push(terms[i]);
+			}
+		}
+		
+
+	}
+	
+	while (!st.isempty())
+	{
+		Term L = st.Pop();
+		polishTerms[j++] = L;
+	}
+	nPolishTerms = j;
+}*/ //vani
 
 /*void Arithmetic::ConvertToPolish()
 {
