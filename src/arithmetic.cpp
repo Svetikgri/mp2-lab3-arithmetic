@@ -28,6 +28,20 @@ Term::Term(char c, TermTypes myType)
 	val = allOperators.find(c);
 	str = c;
 }
+
+Term::Term (const Term& s)
+{ 
+	type=s.type; 
+	str=s.str; 
+	val = s.val; 
+}
+
+Term::Term(const string& str1, TermTypes myType)
+{
+	type = myType;
+	str = str1;
+	val = stod(str1);
+}
 //Term::Term(char c)
 //{
 //     str=c;
@@ -81,7 +95,7 @@ void Arithmetic::DivideToTerms()
 			}
 		default:
 			{
-				if (isdigit(c)) //если это цифра, начиная с нее будет число.
+  				if (isdigit(c)) //если это цифра, начиная с нее будет число.
 				{
 					string v;
 					int j = i;
@@ -90,12 +104,17 @@ void Arithmetic::DivideToTerms()
 					v = inputStr.substr(i);
 					res=stod(v, &p);//сконвертировал строку в число например "123+2" => 123.0   //p = 3 (+)
 					terms[nTerms] = Term(res, VALUE); // здесь определили тип внутри конструктора
-					nTerms++;
+ 					nTerms++;
 
 					i += p - 1;
 				}
 				else if (allOperators.find(c) == string::npos) //если символ не нашли в строке allOperators
-					throw "no_correct_symbol";
+				{
+					terms[nTerms].type = UNKNOWN;
+					terms[nTerms].str = c;
+					nTerms++;
+				}
+					//throw "no_correct_symbol";
 			}
 				// либо это - недопуситмый символ allOperators.find(c) == npos
 				// see http://www.cplusplus.com/reference/string/string/find/
@@ -116,11 +135,28 @@ void Arithmetic::delspace()//удаление пробелов
 	}
 }
 
+/*void null(string inputStr)
+{
+	//string a=0;
+	for (int i = 0; i < inputStr.length(); i++)
+	{
+		if ((inputStr[i] == '-')&&(i == 0))
+			//inputStr.insert(i,0);
+			for (int i = 0; i < inputStr.length(); i++)
+			{
+
+			}
+		/*if ((inputStr[i] == '-')&&(inputStr[i-1]='('))
+			inputStr.insert(i,a);*/
+//	}
+		
+//}
 
 Arithmetic::Arithmetic(const string & str)//конструктор
 {
 		inputStr = str;
-		// можно здесь вызвать функцию, которая вставит в inputStr 0 перед унарным -.
+		delspace();
+	//	null(inputStr);// можно здесь вызвать функцию, которая вставит в inputStr 0 перед унарным -.
 		terms = new Term[inputStr.length()];
 		polishTerms = NULL;
 		nTerms = 0;
@@ -148,6 +184,24 @@ Arithmetic& Arithmetic::operator=(const Arithmetic& a)
 bool Arithmetic::check_brackets() const//есть тест
 {
 	bool res = true;
+	int tmp = 0;
+	for (int i = 0; i < nTerms; i++)
+	{
+		if (terms[i].type == OPEN_BRACKET)
+			tmp++;
+
+		if (terms[i].type == CLOSE_BRACKET)
+			tmp--;
+	}
+
+	if (tmp != 0)
+	{
+		cout << "   "<< "Brackets error" << endl;
+		res=false;
+	}
+	return res;
+
+	/*bool res = true;
 	int check=0;
 	for (int i = 0; i < inputStr.length(); i++)
 	{
@@ -161,16 +215,19 @@ bool Arithmetic::check_brackets() const//есть тест
 	}
 	if (check==0)
 		return true;
-	else return false;
+	else return false;*/
 
 }
 
 bool Arithmetic::check_symbols() const//проверка на недопустимые символы +
 {
+	int k=0;
 	bool res=true;
 	cout << "UNKNOWN symbols: ";
 
 	for (int i=0;i<nTerms;i++)
+	{
+		
 		if (terms[i].type==UNKNOWN)
 		{
 			res = false;
@@ -179,9 +236,31 @@ bool Arithmetic::check_symbols() const//проверка на недопусти
 	if (res)
 		cout << "none\n";
 
+	if (terms[i].type == VALUE)
+		{
+			for (int j = 0; j < (terms[i].str).length(); j++)//?
+				if (terms[i].str[j] == '.')
+					k++;
+			if (k > 1 || terms[i].str.front() == '.' || terms[i].str.back() == '.')
+			{
+				if (res)
+				{
+					cout << "Unacessible symbols:\n";
+					res = false;
+				}
+				cout << "  " << terms[i].str << endl;
+
+				/*for(int j=0; j<(terms[i].str).length(); j++)
+					if(terms[i].str[j] == '.')
+						k++;
+				if(k>1 || terms[i].str[0] == '.' || terms[i].str[nTerms-1] == '.')
+					return false;*/
+		}
+
+	}
 	return res;
 }
-
+}
 bool Arithmetic::check_opers() const//+
 {
 	
@@ -248,24 +327,24 @@ bool Arithmetic::IsCorrect() const//корректно ли
 bool Arithmetic::priority(Term in, Term top) const
 {
 	int p1, p2;
-	switch (in.str[0])
+	switch ((int)in.val)
 	{
-	case '(': p1 = -1;
+	case 4: p1 = -1;
 		break;
-	case '+': p1 = 0;
+	case 0: p1 = 0;
 		break;
-	case '-': p1 = 0;
+	case 1: p1 = 0;
 		break;
 	default: p1 = 1;
 	}
 
-	switch (top.str[0])
+	switch ((int)top.val)
 	{
-	case '(': p2 = -1;
+	case 4: p2 = -1;
 		break;
-	case '+': p2 = 0;
+	case 0: p2 = 0;
 		break;
-	case '-': p2 = 0;
+	case 1: p2 = 0;
 		break;
 	default: p2 = 1;
 	}
@@ -279,10 +358,12 @@ return false;
 
 void Arithmetic::OPN() //перевод в польскую запись
 {
-	polishTerms = new Term[nTerms];
-	nPolishTerms = 0;
+	Term zero;
+	zero.str = "0";
+	zero.type = VALUE;
 
-	Term* temp = polishTerms;
+	polishTerms = new Term[2*nTerms];
+	nPolishTerms = 0;
 
 	Stack<Term> a(2*nTerms);	
 	int j=0;
@@ -290,7 +371,7 @@ void Arithmetic::OPN() //перевод в польскую запись
 	for (int i = 0; i < nTerms; i++)
 	{
 		if (terms[i].type == VALUE)
-			temp[j++]= terms[i];
+			polishTerms[j++]= terms[i];
 
 		if (terms[i].type == OPEN_BRACKET)
 			a.Push(terms[i]);
@@ -300,38 +381,50 @@ void Arithmetic::OPN() //перевод в польскую запись
 					Term x = a.Pop();
 					while (x.type != OPEN_BRACKET)
 					{
-						temp[j++]= x;
+						polishTerms[j++]= x;
 						x = a.Pop();
 					}
 				}
 
 		if (terms[i].type == OPERATOR)
 		{
-			if (a.isempty())
+			
+			
+			/*if (a.isempty())//это мое
 				a.Push(terms[i]);
 			else
 			{
-
-				 Term x = a.Peek();
+			Term x = a.Peek();//мое
 				 while ((a.isempty()!= 1) && priority(terms[i],x)) 
 				 {
-					 x = a.Pop();
-					 temp[j++]= x;
-					 x = a.Peek(); 
-				 }
+					// x = a.Pop();
+					 polishTerms[j++]= a.Pop();
+					  //x = a.Peek(); 
+				 }*/
+				
+			if (terms[i].str == "-")
+				if (i == 0)
+					polishTerms[j++] = zero;
+				else if (terms[i-1].type == OPEN_BRACKET)
+					polishTerms[j++] = zero;
+
+			while (!a.isempty() && a.Peek().type !=OPEN_BRACKET && priority(terms[i],a.Peek()))
+				polishTerms[j++] = a.Pop();
+			
+				 
 				 a.Push(terms[i]);
 			}
 		}
 
-		
-	}
+
+	
 
 	while (!a.isempty())
 	{
-		Term x = a.Pop();
+		//Term x = a.Pop();
 		// 1) a.Pop() ==> вызов конструктора копирования для возврата значения pstack[top + 1] , получили временный объект K
 		// 2) x = K ==> вызов x.operator=(K)
-		temp[j++]= x;
+		polishTerms[j++]= a.Pop();
 	}
 
 	nPolishTerms = j;
@@ -358,10 +451,10 @@ double Arithmetic::Calculate() const
 			double c = a.Pop();
 			switch ((int)polishTerms[i].val)
 			{
-			case 0: res = b+c; break;
-			case 1: res = b-c; break;
-			case 2: res = b*c; break;
-			case 3: res = b/c; break;
+			case 0: res = c+b; break;
+			case 1: res = c-b; break;
+			case 2: res = c*b; break;
+			case 3: res = c/b; break;
 			}
 			a.Push(res);
 		}

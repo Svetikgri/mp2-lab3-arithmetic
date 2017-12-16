@@ -22,7 +22,7 @@ struct Term
 	Term();
 	Term(const string& str);
 	Term(const string& str, TermTypes myType);
-	Term (const Term& s) { type=s.type; str=s.str; val = s.val; }
+	Term (const Term& s); 
 	//Term(char c);
     //Term(const string& str, TermTypes myType);
 	Term(char c, TermTypes myType);

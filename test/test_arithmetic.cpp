@@ -4,7 +4,7 @@
 #include "arithmetic.h"
 
 
-TEST(Arithm, can_create_term)
+/*TEST(Arithm, can_create_term)
 {
   ASSERT_NO_THROW(Term t(5.0,VALUE));
 }
@@ -17,7 +17,7 @@ TEST(Arithm, can_create_term1)
 TEST(Arithm, can_create_term2)
 {
   ASSERT_NO_THROW(Term t('+',OPERATOR));
-}
+}*/
 
 /*TEST(Arithm, can_create_term3)
 {
@@ -25,7 +25,7 @@ TEST(Arithm, can_create_term2)
 }*/
 
 
-TEST(Arithm, t1)
+/*TEST(Arithm, t1)
 {
 	Arithmetic a("(");
 	Term t(4.0, OPEN_BRACKET);
@@ -95,14 +95,22 @@ TEST(Arithm, t5)
 	EXPECT_EQ(5, nt);
 }
 
-/*TEST(Arithm, check_symbols)
+TEST(Arithm, check_symbols)
 {
-	Arithmetic a("%");
+	Arithmetic a("!45!");
 
 	EXPECT_EQ(false,a.check_symbols());
 }*/
 
-TEST(Arithm, check_symbols1)
+/*TEST(Arithm, check_symbols3)
+{
+	Arithmetic a("3%");
+
+	EXPECT_EQ(false,a.check_symbols());
+}*/
+
+
+/*TEST(Arithm, check_symbols1)
 {
 	Arithmetic a("12");
 
@@ -114,9 +122,9 @@ TEST(Arithm, check_symbols2)
 	Arithmetic a("12+75/2");
 
 	EXPECT_EQ(true,a.check_symbols());
-}
+}*/
 
-TEST(Arithm, check_opers)
+/*TEST(Arithm, check_opers)
 {
 	Arithmetic a("2++");
 	//Term t(123.0, VALUE);
@@ -153,9 +161,46 @@ TEST(Arithm, check_brackets)
 	Arithmetic a("((/*56+");
 
 	EXPECT_EQ(false,a.check_brackets());
+}*/
+/*TEST(Arithm, check_brackets1)
+{
+	Arithmetic a("()()/*56+");
+
+	EXPECT_EQ(true,a.check_brackets());
+}
+TEST(Arithm, check_brackets2)
+{
+	Arithmetic a(")((");
+
+	EXPECT_EQ(false,a.check_brackets());
+}
+TEST(Arithm, check_brackets3)
+{
+	Arithmetic a("(()))/*56+");
+
+	EXPECT_EQ(false,a.check_brackets());
+}*/
+
+TEST(Arithm, can_calculate_expressions0)
+{
+	Arithmetic b_test("(-3)+4");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(1, x);
 }
 
-TEST(Arithm, can_calculate_expressions)
+TEST(Arithm, can_calculate_expressions01)
+{
+	Arithmetic b_test("((-3)+4)/5");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(0.2, x);
+}
+
+
+/*TEST(Arithm, can_calculate_expressions)
 {
 	Arithmetic b_test("1+1");
 	b_test.DivideToTerms();
@@ -164,88 +209,97 @@ TEST(Arithm, can_calculate_expressions)
 	EXPECT_EQ(2, x);
 }
 
-/*class ParameterizedString : public ::testing::TestWithParam<string>
+TEST(Arithm, can_calculate_expressions1)
 {
-protected:
-	string bf1;
-
-public:
-	ParameterizedString() : bf1(GetParam())
-	{		
-	}
-
-	~ParameterizedString() {}
-};
-
-
-TEST_P(ParameterizedString, can_determinate_eror)
-{
-	EXPECT_EQ(0, ChekString(bf1));
+	Arithmetic b_test("13+1");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(14, x);
 }
 
-string test_values[] = { "2--", "2++","1+3*()", "(4.4-3)*((6-5)", "(1-arr*)", "(/2+1)" , "()"," (1-3*423.1 )-1+3.4-12 .12.3", "(1-arr/)", "(2+3)(1-3)" };
-
-INSTANTIATE_TEST_CASE_P(Instantiation2,
-	ParameterizedString,
-	::testing::ValuesIn(test_values));
-
-class ParameterizedString2 : public ParameterizedString
-{};
-
-TEST_P(ParameterizedString2, can_determinate_true)
+TEST(Arithm, can_calculate_expressions3)
 {
-	EXPECT_EQ(1, ChekString(bf1));
+	Arithmetic b_test("1*3+1");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(4, x);
 }
 
-string test_values2[] = { "-2-1", "8-(-4+7)" };
-
-INSTANTIATE_TEST_CASE_P(Instantiation3,
-	ParameterizedString2,
-	::testing::ValuesIn(test_values2));
-
-struct T
+TEST(Arithm, can_calculate_expressions4)
 {
-	string s;
-	bool isCorrect;
-	double val;
-
-	T(string mys = "", bool f = true, double v = 0.0)
-	{
-		s = mys;
-		isCorrect = f;
-		val = v;
-	}
-};
-
-class ParameterizedString3 : public ::testing::TestWithParam<T>
-{
-protected:
-	T testcase;
-public:
-	ParameterizedString3() : testcase(GetParam())
-	{}
-
-	~ParameterizedString3() {}
-};
-
-
-TEST_P(ParameterizedString3, can_calc)
-{
-	Arithmetic a(GetParam().s);
-	a.DivideToTerms();
-	//a.OPN();
-	//if(ChekString(GetParam().s))
-	EXPECT_EQ(GetParam().val, a.Calculate());
-	//else EXPECT_EQ(GetParam().IsCorrect, ChekString(GetParam().s));
+	Arithmetic b_test("113+5");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(118, x);
 }
 
-T myarray[] = {T("3-2", true, 1), T("2*3", true, 6), T("-2*3.12+4-1", true , -3.24), T("(-34+4)", true ,-30 ), T("-1+3--23.2", false , 0) };
+TEST(Arithm, can_calculate_expressions2)
+{
+	Arithmetic b_test("13+1-2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(12, x);
+}
+TEST(Arithm, can_calculate_expressions5)
+{
+	Arithmetic b_test("14/2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(7, x);
+}
+TEST(Arithm, can_calculate_expressions6)
+{
+	Arithmetic b_test("(1+3)*4/2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(8, x);
+}
 
-INSTANTIATE_TEST_CASE_P(Instantiation4,
-	ParameterizedString3,
-::testing::ValuesIn(myarray));
+TEST(Arithm, can_calculate_expressions7)
+{
+	Arithmetic b_test("4/(1+3)*4/2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(2, x);
+}
 
+TEST(Arithm, can_calculate_expressions8)
+{
+	Arithmetic b_test("(1*5)-(3.5 +6.5)/2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(0, x);
+}
+
+TEST(Arithm, can_calculate_expressions9)
+{
+	Arithmetic b_test("((6/3)+(3.35 +6.54))/2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(5.945, x);
+}
+
+TEST(Arithm, can_calculate_expressions10)
+{
+	Arithmetic b_test("1-2");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ((-1), x);
+}
 */
+
+
+
 
 //struct check_test
 //{
@@ -318,59 +372,59 @@ INSTANTIATE_TEST_CASE_P(Instantiation4,
 //	));
 
 
-//TEST(Arithmethic, can_parse_expression)
-//{
-//	Arithmetic expr("-2+67*(-3.1/&)");
-//	Term cmp[11];
-//	Term* src = expr.getTerms();
-//	cmp[0] = Term("-",OPERATOR);
-//	cmp[1] = Term("2", VALUE);
-//	cmp[2] = Term("+", OPERATOR);
-//	cmp[3] = Term("67", VALUE);
-//	cmp[4] = Term("*", OPERATOR);
-//	cmp[5] = Term("(", CLOSE_BRACKET);
-//	cmp[6] = Term("-", OPERATOR);
-//	cmp[7] = Term("3.1", VALUE);
-//	cmp[8] = Term("/", OPERATOR);
-//	cmp[9] = Term("&", UNKNOWN);
-//	cmp[10] = Term(")", OPEN_BRACKET);
-//	bool res = true;
-//	for (int i = 0; i < expr.getNTerms(); i++)
-//		if (cmp[i] != src[i])
-//			res = false;
-//
-//	EXPECT_EQ(true,res);
-//	ASSERT_NO_THROW(expr = Arithmetic(""));
-//	EXPECT_EQ(0,expr.getNTerms());
-//}
+/*TEST(Arithmethic, can_parse_expression)
+{
+	Arithmetic expr("-2+67*(-3.1/1)");
+	Term cmp[11];
+	Term* src = expr.getTerms();
+	cmp[0] = Term("-",OPERATOR);
+	cmp[1] = Term("2", VALUE);
+	cmp[2] = Term("+", OPERATOR);
+	cmp[3] = Term("67", VALUE);
+	cmp[4] = Term("*", OPERATOR);
+	cmp[5] = Term("(", CLOSE_BRACKET);
+	cmp[6] = Term("-", OPERATOR);
+	cmp[7] = Term("3.1", VALUE);
+	cmp[8] = Term("/", OPERATOR);
+	cmp[9] = Term("1", VALUE);
+	cmp[10] = Term(")", OPEN_BRACKET);
+	bool res = true;
+	for (int i = 0; i < expr.getNTerms(); i++)
+		if (cmp[i] != src[i])
+			res = false;
+
+	EXPECT_EQ(true,res);
+	ASSERT_NO_THROW(expr = Arithmetic(""));
+	EXPECT_EQ(0,expr.getNTerms());
+}*/
 
 
-//TEST(arithmetic,can_transform_to_rpn)
-//{
-//	Arithmetic expr("- 3 + 4.7 * 2 / (1 - 3)"); //0 3 - 4.7 2 * 1 x - / +
-//	Term src[11];
-//	expr.OPN_test(src);
-//	Term cmp[11];
-//	cmp[0] = Term("0", VALUE);
-//	cmp[1] = Term("3", VALUE);
-//	cmp[2] = Term("-", OPERATOR);
-//	cmp[3] = Term("4.7", VALUE);
-//	cmp[4] = Term("2", VALUE);
-//	cmp[5] = Term("*", OPERATOR);
-//	cmp[6] = Term("1", VALUE);
-//	cmp[7] = Term("3", VALUE);
-//	cmp[8] = Term("-", OPERATOR);
-//	cmp[9] = Term("/", OPERATOR);
-//	cmp[10] = Term("+", OPERATOR);
-//	bool res = true;
-//	for (int i = 0; i < 11; i++)
-//		if (cmp[i] != src[i])
-//		{
-//			cout << src[i].str << "   " << cmp[i].str << endl;
-//			res = false;
-//		}
-//	EXPECT_EQ(true,res);
-//}
+/*TEST(arithmetic,can_transform_to_rpn)
+{
+	Arithmetic expr("0 3 + 4.7 * 2 / (1 - 3)"); //0 3 - 4.7 2 * 1 x - / +
+	Term src[11];
+	expr.OPN_test();
+	Term cmp[11];
+	cmp[0] = Term("0", VALUE);
+	cmp[1] = Term("3", VALUE);
+	cmp[2] = Term("-", OPERATOR);
+	cmp[3] = Term("4.7", VALUE);
+	cmp[4] = Term("2", VALUE);
+	cmp[5] = Term("*", OPERATOR);
+	cmp[6] = Term("1", VALUE);
+	cmp[7] = Term("3", VALUE);
+	cmp[8] = Term("-", OPERATOR);
+	cmp[9] = Term("/", OPERATOR);
+	cmp[10] = Term("+", OPERATOR);
+	bool res = true;
+	for (int i = 0; i < 11; i++)
+		if (cmp[i] != src[i])
+		{
+			cout << src[i].str << "   " << cmp[i].str << endl;
+			res = false;
+		}
+	EXPECT_EQ(true,res);
+}*/
 
 //INSTANTIATE_TEST_CASE_P(Inst2, arithm_calc,	::testing::Values());
 
