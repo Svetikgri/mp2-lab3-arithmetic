@@ -42,6 +42,13 @@ Term::Term(const string& str1, TermTypes myType)
 	str = str1;
 	val = stod(str1);
 }
+
+Term::Term(double myVal, TermTypes myType, string& str1)
+{
+	val = myVal;
+	type = myType;
+	str = str1;
+}
 //Term::Term(char c)
 //{
 //     str=c;
@@ -103,7 +110,7 @@ void Arithmetic::DivideToTerms()
 					double res;
 					v = inputStr.substr(i);
 					res=stod(v, &p);//сконвертировал строку в число например "123+2" => 123.0   //p = 3 (+)
-					terms[nTerms] = Term(res, VALUE); // здесь определили тип внутри конструктора
+					terms[nTerms] = Term(res, VALUE,v); // здесь определили тип внутри конструктора
  					nTerms++;
 
 					i += p - 1;
@@ -219,7 +226,7 @@ bool Arithmetic::check_brackets() const//есть тест
 
 }
 
-bool Arithmetic::check_symbols() const//проверка на недопустимые символы +
+bool Arithmetic::check_symbols() const//проверка на недопустимые символы 
 {
 	int k=0;
 	bool res=true;
@@ -258,8 +265,9 @@ bool Arithmetic::check_symbols() const//проверка на недопусти
 		}
 
 	}
+	}
 	return res;
-}
+
 }
 bool Arithmetic::check_opers() const//+
 {

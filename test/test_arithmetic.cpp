@@ -4,7 +4,7 @@
 #include "arithmetic.h"
 
 
-/*TEST(Arithm, can_create_term)
+TEST(Arithm, can_create_term)
 {
   ASSERT_NO_THROW(Term t(5.0,VALUE));
 }
@@ -17,15 +17,10 @@ TEST(Arithm, can_create_term1)
 TEST(Arithm, can_create_term2)
 {
   ASSERT_NO_THROW(Term t('+',OPERATOR));
-}*/
-
-/*TEST(Arithm, can_create_term3)
-{
-  ASSERT_NO_THROW(Term t("+"));
-}*/
+}
 
 
-/*TEST(Arithm, t1)
+TEST(Arithm, t1)
 {
 	Arithmetic a("(");
 	Term t(4.0, OPEN_BRACKET);
@@ -100,17 +95,30 @@ TEST(Arithm, check_symbols)
 	Arithmetic a("!45!");
 
 	EXPECT_EQ(false,a.check_symbols());
-}*/
+}
 
-/*TEST(Arithm, check_symbols3)
+TEST(Arithm, check_symbols3)
 {
 	Arithmetic a("3%");
 
 	EXPECT_EQ(false,a.check_symbols());
-}*/
+}
 
+TEST(Arithm, check_symbols5)
+{
+	Arithmetic a("83%2");
 
-/*TEST(Arithm, check_symbols1)
+	EXPECT_EQ(false,a.check_symbols());
+}
+
+TEST(Arithm, check_symbols4)
+{
+	Arithmetic a("8.2");
+
+	EXPECT_EQ(true,a.check_symbols());
+}
+
+TEST(Arithm, check_symbols1)
 {
 	Arithmetic a("12");
 
@@ -122,12 +130,11 @@ TEST(Arithm, check_symbols2)
 	Arithmetic a("12+75/2");
 
 	EXPECT_EQ(true,a.check_symbols());
-}*/
+}
 
-/*TEST(Arithm, check_opers)
+TEST(Arithm, check_opers)
 {
 	Arithmetic a("2++");
-	//Term t(123.0, VALUE);
 
 	EXPECT_EQ(false, a.check_opers());
 }
@@ -135,7 +142,6 @@ TEST(Arithm, check_symbols2)
 TEST(Arithm, check_opers1)
 {
 	Arithmetic a("2+456*7");
-	//Term t(123.0, VALUE);
 
 	EXPECT_EQ(true,a.check_opers());
 }
@@ -143,15 +149,13 @@ TEST(Arithm, check_opers1)
 TEST(Arithm, check_opers2)
 {
 	Arithmetic a("()64++");
-	//Term t(123.0, VALUE);
-
+	
 	EXPECT_EQ(false,a.check_opers());
 }
 
 TEST(Arithm, check_opers3)
 {
 	Arithmetic a("/*56+");
-	//Term t(123.0, VALUE);
 
 	EXPECT_EQ(false,a.check_opers());
 }
@@ -161,8 +165,8 @@ TEST(Arithm, check_brackets)
 	Arithmetic a("((/*56+");
 
 	EXPECT_EQ(false,a.check_brackets());
-}*/
-/*TEST(Arithm, check_brackets1)
+}
+TEST(Arithm, check_brackets1)
 {
 	Arithmetic a("()()/*56+");
 
@@ -179,7 +183,7 @@ TEST(Arithm, check_brackets3)
 	Arithmetic a("(()))/*56+");
 
 	EXPECT_EQ(false,a.check_brackets());
-}*/
+}
 
 TEST(Arithm, can_calculate_expressions0)
 {
@@ -200,7 +204,7 @@ TEST(Arithm, can_calculate_expressions01)
 }
 
 
-/*TEST(Arithm, can_calculate_expressions)
+TEST(Arithm, can_calculate_expressions)
 {
 	Arithmetic b_test("1+1");
 	b_test.DivideToTerms();
@@ -296,7 +300,7 @@ TEST(Arithm, can_calculate_expressions10)
 	double x = b_test.Calculate();
 	EXPECT_EQ((-1), x);
 }
-*/
+
 
 
 

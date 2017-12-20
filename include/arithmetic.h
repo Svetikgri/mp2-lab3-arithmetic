@@ -29,6 +29,7 @@ struct Term
 	// конструктор копирования
 	Term & operator=(const Term &p);// перегрузка =
 	Term(double myVal, TermTypes myType);
+	Term(double myVal, TermTypes myType, string& str1);
 	bool operator==(const Term &p) const;
 	bool operator!=(const Term& lop);
 
