@@ -3,6 +3,7 @@
 #include "arithmetic.h"
 #include <cstdlib>
 #include <string>
+#include <conio.h>
 
 using namespace std;
 
@@ -11,23 +12,21 @@ using namespace std;
 
 int main()
 {
-	bool f = true;
-	while (f)
-	{
 		string s;
 		cout << "input string: ";
 		cin >> s;
 		Arithmetic A(s);
-	//	Temp src[1000];
 		double res;
-		//int k;
+		if (A.IsCorrect())
+		{		
 		A.DivideToTerms();
 		A.OPN();
 		res = A.Calculate();
 		cout << res << endl;
-		cout << "continue?" << endl;
-		cin >> f;
-	}
+		}
+		else cout << "no correct input string: ";
+		_getch();
+		
 }
 
 

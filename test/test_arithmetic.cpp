@@ -145,6 +145,12 @@ TEST(Arithm, check_opers1)
 
 	EXPECT_EQ(true,a.check_opers());
 }
+TEST(Arithm, check_opers12)
+{
+	Arithmetic a("3.1-3");
+
+	EXPECT_EQ(true,a.check_opers());
+}
 
 TEST(Arithm, check_opers2)
 {
@@ -184,6 +190,15 @@ TEST(Arithm, check_brackets3)
 
 	EXPECT_EQ(false,a.check_brackets());
 }
+
+TEST(Arithm, check_brackets4)
+{
+	Arithmetic a("((()))/*56+");
+
+	EXPECT_EQ(true,a.check_brackets());
+}
+
+
 
 TEST(Arithm, can_calculate_expressions0)
 {
@@ -299,6 +314,15 @@ TEST(Arithm, can_calculate_expressions10)
 	b_test.OPN();
 	double x = b_test.Calculate();
 	EXPECT_EQ((-1), x);
+}
+
+TEST(Arithm, can_calculate_expressions11)
+{
+	Arithmetic b_test("(-1)*(-2)");
+	b_test.DivideToTerms();
+	b_test.OPN();
+	double x = b_test.Calculate();
+	EXPECT_EQ(2, x);
 }
 
 

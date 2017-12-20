@@ -69,6 +69,7 @@ public:
 	int getNTerms() const  { return nTerms; }
     int OPN_test() {return nPolishTerms; }
 	Term* getPolishTerms() const { return polishTerms; }
+	
 };
 
 
